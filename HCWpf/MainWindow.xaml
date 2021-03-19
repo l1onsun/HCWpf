@@ -5,8 +5,97 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HCWpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="    Hierarchical Clustering" 
+        Height="400" 
+        Width="600">
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" MinWidth="160"></ColumnDefinition>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <!-- LEFT_CONTROL -->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <!--LEFT_CONTROLL::TOP -->
+            <StackPanel Grid.Row="0">
+                <!-- Load Dataset -->
+                <Button x:Name="buttonLoadDataset" 
+                Margin="0 20 0 0"
+                Width="150" 
+                Height="25"
+                Background="WhiteSmoke"
+                Content="Load Dataset (.csv)"/>
+
+                <!-- Choose Datase -->
+                <TextBlock 
+                    Width="150"
+                    Margin="0 20 0 0">
+                    Choose Dataset:
+                </TextBlock>
+                <ComboBox x:Name="buttonChooseDataset" 
+                Width="150" 
+                Height="25"
+                Background="WhiteSmoke">
+                </ComboBox>
+
+                <!-- Choose Size -->
+                <Grid Width="150" Margin="0 20 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"></RowDefinition>
+                        <RowDefinition Height="auto"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Column="0" Grid.Row="0">Dataset Size:</TextBlock>
+                    <TextBlock Grid.Column="2" Grid.Row="0" Width="40" TextAlignment="Center">???</TextBlock>
+                    <TextBlock Grid.Column="0" Grid.Row="1">Applied Size:</TextBlock>
+                    <TextBox Grid.Column="2" Grid.Row="1" Width="40"/>
+                </Grid>
+                <Slider Width="150" Margin="0 5 0 5"/>
+            </StackPanel>
+            
+            <!--LEFT_CONTROL::BOTTOM -->
+            <StackPanel Grid.Row="2">
+                <ProgressBar Minimum="0" Maximum="100" Value="50" Width="150" Height="10"></ProgressBar>
+                
+                <!-- Start / Stop -->
+                <Grid Width="150" Margin="0 10 0 20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Button x:Name="buttonStart" Width="65" Height="25"
+                            Content="Start"
+                            Grid.Column="0"
+                            Background="WhiteSmoke"
+                            IsEnabled="False"></Button>
+                    <Button x:Name="buttonStop" Width="65" Height="25"
+                            Content="Stop"
+                            Grid.Column="2"
+                            Background="WhiteSmoke"
+                            IsEnabled="False"></Button>
+                </Grid>
+            </StackPanel>
+        </Grid>
+
+        <GridSplitter Grid.Column="1"
+                    ShowsPreview="True" 
+                    Width="3"
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Stretch"/>
+
+        <!-- RIGHT CONTROL PANEL-->
+
     </Grid>
 </Window>
