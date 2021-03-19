@@ -6,11 +6,11 @@
         xmlns:local="clr-namespace:HCWpf"
         mc:Ignorable="d"
         Title="    Hierarchical Clustering" 
-        Height="400" 
-        Width="600">
+        Height="450" 
+        Width="700">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200" MinWidth="160"></ColumnDefinition>
+            <ColumnDefinition Width="200" MinWidth="180"></ColumnDefinition>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
@@ -21,32 +21,31 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <!--LEFT_CONTROLL::TOP -->
+            <!--TOP_BLOCK -->
             <StackPanel Grid.Row="0">
                 <!-- Load Dataset -->
-                <Button x:Name="buttonLoadDataset" 
-                Margin="0 20 0 0"
-                Width="150" 
+                <Button x:Name="buttonLoadDataset" Click="ButtonLoadDataset_Click"
+                Margin="25 20 25 0"
                 Height="25"
                 Background="WhiteSmoke"
                 Content="Load Dataset (.csv)"/>
 
                 <!-- Choose Datase -->
-                <TextBlock 
-                    Width="150"
-                    Margin="0 20 0 0">
+                <TextBlock Margin="25 15 25 0">
                     Choose Dataset:
                 </TextBlock>
                 <ComboBox x:Name="buttonChooseDataset" 
-                Width="150" 
+                Margin="25 0 25 0"
                 Height="25"
                 Background="WhiteSmoke">
                 </ComboBox>
 
                 <!-- Choose Size -->
-                <Grid Width="150" Margin="0 20 0 0">
+                <Grid Margin="25 15 25 0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="*"/>
@@ -57,19 +56,55 @@
                         <RowDefinition Height="auto"></RowDefinition>
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Column="0" Grid.Row="0">Dataset Size:</TextBlock>
-                    <TextBlock Grid.Column="2" Grid.Row="0" Width="40" TextAlignment="Center">???</TextBlock>
+                    <TextBlock Grid.Column="2" Grid.Row="0" Width="60" TextAlignment="Center">not loaded</TextBlock>
                     <TextBlock Grid.Column="0" Grid.Row="1">Applied Size:</TextBlock>
-                    <TextBox Grid.Column="2" Grid.Row="1" Width="40"/>
+                    <TextBox Grid.Column="2" Grid.Row="1" Width="60" TextAlignment="Center"/>
                 </Grid>
-                <Slider Width="150" Margin="0 5 0 5"/>
+                <Slider Margin="25 5 25 5"/>
+                
+                
+                
             </StackPanel>
             
-            <!--LEFT_CONTROL::BOTTOM -->
+            <!-- MIDDLE_BLOCK -->
             <StackPanel Grid.Row="2">
-                <ProgressBar Minimum="0" Maximum="100" Value="50" Width="150" Height="10"></ProgressBar>
+                <!-- Algorithm Settings -->
+                <TextBlock Margin="25 0 25 0">
+                    Algorithm Type:
+                </TextBlock>
+                <ComboBox x:Name="chooseAlgorithm" 
+                    Margin="25 0 25 0" Height="25"
+                    SelectedIndex="0">
+                    <ComboBoxItem>Synchronous</ComboBoxItem>
+                    <ComboBoxItem>Concurrent</ComboBoxItem>
+                </ComboBox>
+                <Grid Margin="25 15 25 15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"></RowDefinition>
+                        <RowDefinition Height="auto"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Column="0" Grid.Row="0">
+                        Max Clusters:
+                    </TextBlock>
+                    <TextBox Grid.Column="2" Grid.Row="0" Width="60" TextAlignment="Center"/>
+                    <TextBlock Grid.Column="0" Grid.Row="1">
+                        Distanse Limit:
+                    </TextBlock>
+                    <TextBox Grid.Column="2" Grid.Row="1" Width="60" TextAlignment="Center"/>
+                </Grid>
+            </StackPanel>
+
+            <!-- BOTTOM_BLOCK -->
+            <StackPanel Grid.Row="4">
+                <ProgressBar Minimum="0" Maximum="100" Value="50" Margin="25 0 25 0" Height="10"></ProgressBar>
                 
                 <!-- Start / Stop -->
-                <Grid Width="150" Margin="0 10 0 20">
+                <Grid Margin="25 10 25 20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="*"/>
@@ -89,8 +124,9 @@
             </StackPanel>
         </Grid>
 
+        <!-- RIGHT/LEFT SPLITTER -->
         <GridSplitter Grid.Column="1"
-                    ShowsPreview="True" 
+                    ShowsPreview="False" 
                     Width="3"
                     HorizontalAlignment="Center" 
                     VerticalAlignment="Stretch"/>
