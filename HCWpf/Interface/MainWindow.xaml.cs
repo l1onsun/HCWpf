@@ -1,53 +1,98 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace HCWpf
 {
-    /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
-    /// </summary>
+
     public partial class MainWindow : Window
     {
-        public MainWindow() => InitializeComponent();
+        private readonly AppController appController;
+
+        public MainWindow()
+        {
+            appController = new(logCallback: AddLog);
+            InitializeComponent();
+            buttonStart.IsEnabled = true; // delete this line
+        }
+
+        private DatasetKeeper SelectedDataset { 
+            get => appController.Datasets[chooseDataset.SelectedItem.ToString()]; 
+        }
+        public int DatasetSize
+        {
+            get {
+                if (chooseDataset.SelectedItem != null)
+                    return SelectedDataset.Size;
+                else
+                    return 0;
+            }
+        }
+        public int AppliedSize
+        {
+            get => (int)sliderAppliedSize.Value;
+            set
+            {
+                sliderAppliedSize.Value = value;
+            }
+        }
+        public int MaxClustets { get; set; }
+        public double DistanceLimit { get; set; }
+
+
         private void ButtonLoadDataset_Click(object sender, RoutedEventArgs e)
         {
-            string defaultDirectory = "../../../ExampleDatasets";
-
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog
+            string datasetName = appController.LoadDatasetDialog();
+            if (datasetName != null)
             {
-                DefaultExt = ".csv",
-                Filter = "Csv datasets (.csv)|*.csv"
-            };
-
-            if (Directory.Exists(defaultDirectory))
-            {
-                Trace.WriteLine("defaultDirectory exists");
-                dlg.InitialDirectory = defaultDirectory;
+                chooseDataset.Items.Add(datasetName);
+                chooseDataset.SelectedIndex = chooseDataset.Items.IndexOf(datasetName);
+                buttonStart.IsEnabled = true;
             }
-            Trace.WriteLine("but anyway");
+        }
 
-            bool? result = dlg.ShowDialog();
+        private void ChooseDataset_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            textDatasetSize.Text = DatasetSize.ToString();
 
-            // Process open file dialog box results
-            if (result == true)
+            SliderRescale();
+
+            ReplaceLogs(SelectedDataset.Logs);
+            appController.SetActiveDataset(SelectedDataset);
+        }
+
+        private void ButtonStart_Click(object sender, RoutedEventArgs e)
+        {
+            appController.Start();
+        }
+
+        private void AddLog(string log)
+        {
+            logStackPanel.Children.Add(new TextBlock { Text = log });
+        }
+
+        private void ReplaceLogs(List<string> newLogs)
+        {
+            logStackPanel.Children.Clear();
+            foreach (string log in newLogs)
             {
-                // Open document
-                string filename = dlg.FileName;
-                MessageBox.Show(filename);
+                AddLog(log);
+            }
+        }
+
+        private void SliderRescale()
+        {
+            bool shouldScaleSlider = false;
+            if (sliderAppliedSize.Value == sliderAppliedSize.Maximum)
+            {
+                shouldScaleSlider = true;
+            }
+            sliderAppliedSize.Maximum = DatasetSize;
+            if (shouldScaleSlider)
+            {
+                sliderAppliedSize.Value = DatasetSize;
             }
         }
     }

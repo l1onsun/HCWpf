@@ -10,9 +10,9 @@ namespace HCWpf
         public readonly double X, Y;
         public HCPoint(string name, double x, double y)
         {
-            this.Name = name;
-            this.X = x;
-            this.Y = y;
+            Name = name;
+            X = x;
+            Y = y;
         }
         override public string ToString()
         {
@@ -37,9 +37,9 @@ namespace HCWpf
         public readonly int Order;
         public HCCluster(List<HCPoint> points)
         {
-            this.Order = nextClusterOrder;
+            Order = nextClusterOrder;
             nextClusterOrder++;
-            this.Points = points;
+            Points = points;
         }
         public static HCCluster FromSinglePoint(HCPoint point)
         {

@@ -16,7 +16,7 @@ namespace HCWpf
 
         public HCPointsReader()
         {
-            Points = new List<HCPoint>();
+            Points = new();
         }
 
         public int SkipedRows
@@ -35,31 +35,27 @@ namespace HCWpf
             bool yIsDouble = double.TryParse(fields[YOrder], out double y);
             if (xIsDouble && yIsDouble)
             {
-                Points.Add(new HCPoint(fields[NameOrder], x, y));
+                Points.Add(new(fields[NameOrder], x, y));
                 return true;
             }
             return false;
         }
 
-        public HCPointsReader ReadCsv(string path, string delimiters = ",")
+        public void ReadCsv(string path, string delimiters = ",")
         {
-            using (TextFieldParser csvParser = new TextFieldParser(path))
-            {
-                csvParser.SetDelimiters(delimiters);
-                csvParser.HasFieldsEnclosedInQuotes = true;
+            using TextFieldParser csvParser = new(path);
+            csvParser.SetDelimiters(delimiters);
+            csvParser.HasFieldsEnclosedInQuotes = true;
 
-                while (!csvParser.EndOfData)
+            while (!csvParser.EndOfData)
+            {
+                string[] fields = csvParser.ReadFields();
+                bool success = TrySavePoint(fields);
+                if (!success)
                 {
-                    // Read current line fields, pointer moves to the next line.
-                    string[] fields = csvParser.ReadFields();
-                    bool success = TrySavePoint(fields);
-                    if (!success)
-                    {
-                        skipedRows += 1;
-                    }
+                    skipedRows += 1;
                 }
             }
-            return this;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿<Window x:Class="HCWpf.MainWindow"
+        x:Name="window"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -28,20 +29,22 @@
             <!--TOP_BLOCK -->
             <StackPanel Grid.Row="0">
                 <!-- Load Dataset -->
-                <Button x:Name="buttonLoadDataset" Click="ButtonLoadDataset_Click"
-                Margin="25 20 25 0"
-                Height="25"
-                Background="WhiteSmoke"
-                Content="Load Dataset (.csv)"/>
+                <Button Click="ButtonLoadDataset_Click"
+                        Margin="25 20 25 0"
+                        Height="25"
+                        Background="WhiteSmoke"
+                        Content="Load Dataset (.csv)"/>
 
                 <!-- Choose Datase -->
                 <TextBlock Margin="25 15 25 0">
                     Choose Dataset:
                 </TextBlock>
-                <ComboBox x:Name="buttonChooseDataset" 
-                Margin="25 0 25 0"
-                Height="25"
-                Background="WhiteSmoke">
+                <ComboBox x:Name="chooseDataset"
+                          SelectedItem="{Binding _, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          SelectionChanged="ChooseDataset_SelectionChanged"
+                          Margin="25 0 25 0"
+                          Height="25"
+                          Background="WhiteSmoke">
                 </ComboBox>
 
                 <!-- Choose Size -->
@@ -56,11 +59,22 @@
                         <RowDefinition Height="auto"></RowDefinition>
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Column="0" Grid.Row="0">Dataset Size:</TextBlock>
-                    <TextBlock Grid.Column="2" Grid.Row="0" Width="60" TextAlignment="Center">not loaded</TextBlock>
+                    <TextBlock x:Name="textDatasetSize" 
+                               Grid.Column="2" Grid.Row="0" Width="60" 
+                               TextAlignment="Center" Height="16" Grid.RowSpan="2" VerticalAlignment="Top">
+                        not loaded</TextBlock>
                     <TextBlock Grid.Column="0" Grid.Row="1">Applied Size:</TextBlock>
-                    <TextBox Grid.Column="2" Grid.Row="1" Width="60" TextAlignment="Center"/>
+                    <TextBox Text="{Binding ElementName=sliderAppliedSize, Path=Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Grid.Column="2" Grid.Row="1" Width="60" 
+                             TextAlignment="Center"/>
                 </Grid>
-                <Slider Margin="25 5 25 5"/>
+                <Slider Margin="25 5 25 5"
+                    x:Name="sliderAppliedSize"
+                    IsSnapToTickEnabled="True" TickFrequency="1"
+                    IsSelectionRangeEnabled="True"
+                    SelectionStart="0"
+                    SelectionEnd="{Binding ElementName=sliderAppliedSize, Path=Value}"
+                    Minimum="0" Maximum="0" Value="0"/>
                 
                 
                 
@@ -91,11 +105,13 @@
                     <TextBlock Grid.Column="0" Grid.Row="0">
                         Max Clusters:
                     </TextBlock>
-                    <TextBox Grid.Column="2" Grid.Row="0" Width="60" TextAlignment="Center"/>
+                    <TextBox Grid.Column="2" Grid.Row="0" Width="60" TextAlignment="Center"
+                             Text="{Binding ElementName=window, Path=MaxClustets}"/>
                     <TextBlock Grid.Column="0" Grid.Row="1">
                         Distance Limit:
                     </TextBlock>
-                    <TextBox Grid.Column="2" Grid.Row="1" Width="60" TextAlignment="Center"/>
+                    <TextBox Grid.Column="2" Grid.Row="1" Width="60" TextAlignment="Center"
+                             Text="{Binding ElementName=window, Path=DistanceLimit}"/>
                 </Grid>
             </StackPanel>
 
@@ -111,6 +127,7 @@
                         <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
                     <Button x:Name="buttonStart" Width="65" Height="25"
+                            Click="ButtonStart_Click"
                             Content="Start"
                             Grid.Column="0"
                             Background="WhiteSmoke"
@@ -132,6 +149,9 @@
                     VerticalAlignment="Stretch"/>
 
         <!-- RIGHT CONTROL PANEL-->
-
+        <ScrollViewer Grid.Column="2" CanContentScroll="True">
+            <StackPanel x:Name="logStackPanel" Margin="20 20 20 20">
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Window>
