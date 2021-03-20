@@ -77,9 +77,23 @@ namespace HCWpf
             return null;
         }
 
-        public void Start()
+        public void Start(string algorithmType, int appliedSize, int maxClusters, double distanceLimit)
         {
-            activeDataset.AddLog($"points number: {activeDataset.Size}");
+            activeDataset.AddLog("Starting new clustering!");
+            activeDataset.AddLog("Clustering parametes:");
+            activeDataset.AddLog($"Algorithm type: {algorithmType}");
+            activeDataset.AddLog($"Points count: {appliedSize}/{activeDataset.Size}");
+            if (maxClusters > 0)
+            {
+                activeDataset.AddLog($"Maximum clusters: {maxClusters}");
+            }
+            if (distanceLimit > 0)
+            {
+                activeDataset.AddLog($"Distance limit: {distanceLimit}");
+            }
+            activeDataset.AddLog("");
+            activeDataset.AddLog("Starting background worker");
+            activeDataset.AddLog("No, it is joke. Background worker not implemented yet");
         }
 
         public void SetActiveDataset(DatasetKeeper newActiveDataset)

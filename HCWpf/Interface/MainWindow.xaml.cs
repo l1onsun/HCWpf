@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace HCWpf
 {
@@ -10,12 +11,12 @@ namespace HCWpf
     public partial class MainWindow : Window
     {
         private readonly AppController appController;
+        private readonly FontFamily logFontFamily = new("Courier New");
 
         public MainWindow()
         {
             appController = new(logCallback: AddLog);
             InitializeComponent();
-            buttonStart.IsEnabled = true; // delete this line
         }
 
         private DatasetKeeper SelectedDataset { 
@@ -32,7 +33,7 @@ namespace HCWpf
         }
         public int AppliedSize
         {
-            get => (int)sliderAppliedSize.Value;
+            get => (int) sliderAppliedSize.Value;
             set
             {
                 sliderAppliedSize.Value = value;
@@ -61,16 +62,29 @@ namespace HCWpf
 
             ReplaceLogs(SelectedDataset.Logs);
             appController.SetActiveDataset(SelectedDataset);
+
+            // buttonStart.IsEnabled = // ToDo: deside how to 
         }
 
         private void ButtonStart_Click(object sender, RoutedEventArgs e)
         {
-            appController.Start();
+            buttonStart.IsEnabled = false;
+            appController.Start(
+                algorithmType: ((ComboBoxItem) chooseAlgorithm.SelectedItem).Content.ToString() ,
+                appliedSize: AppliedSize,
+                maxClusters: MaxClustets,
+                distanceLimit: DistanceLimit
+            );
         }
 
         private void AddLog(string log)
         {
-            logStackPanel.Children.Add(new TextBlock { Text = log });
+            logStackPanel.Children.Add(
+                new TextBlock { 
+                    Text = log,
+                    FontFamily = logFontFamily,
+                }
+            );
         }
 
         private void ReplaceLogs(List<string> newLogs)
