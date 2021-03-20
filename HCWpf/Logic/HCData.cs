@@ -92,7 +92,7 @@ namespace HCWpf
         }
     }
 
-    class HCClusterPair: IComparable<HCClusterPair>
+    class HCClusterPair : IComparable<HCClusterPair>
     {
         public HCCluster I;
         public HCCluster J;
@@ -141,11 +141,11 @@ namespace HCWpf
 
         public HCState()
         {
-            this.Iterations = new();
+            Iterations = new List<HCIteration>();
         }
         public override string ToString()
         {
-            StringBuilder sb = new();
+            var sb = new StringBuilder();
             foreach (HCIteration i in this.Iterations)
             {
                 sb.AppendLine(i.ToString());

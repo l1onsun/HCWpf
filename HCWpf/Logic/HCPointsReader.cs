@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.FileIO;
+using System;
 using System.Collections.Generic;
-using Microsoft.VisualBasic.FileIO;
 
 namespace HCWpf
 {
@@ -12,7 +12,7 @@ namespace HCWpf
         public List<HCPoint> Points;
 
         private int skipedRows = 0;
-        
+
 
         public HCPointsReader()
         {
@@ -41,7 +41,7 @@ namespace HCWpf
             return false;
         }
 
-        public HCPointsReader ReadCsv(string path, string delimiters=",")
+        public HCPointsReader ReadCsv(string path, string delimiters = ",")
         {
             using (TextFieldParser csvParser = new TextFieldParser(path))
             {
@@ -53,7 +53,8 @@ namespace HCWpf
                     // Read current line fields, pointer moves to the next line.
                     string[] fields = csvParser.ReadFields();
                     bool success = TrySavePoint(fields);
-                    if (!success) {
+                    if (!success)
+                    {
                         skipedRows += 1;
                     }
                 }
