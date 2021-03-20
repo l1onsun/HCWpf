@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,14 +25,22 @@ namespace HCWpf
         public MainWindow() => InitializeComponent();
         private void ButtonLoadDataset_Click(object sender, RoutedEventArgs e)
         {
+            string defaultDirectory = "../../../ExampleDatasets";
+
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog
             {
-                FileName = "Document", // Default file name
-                DefaultExt = ".txt", // Default file extension
-                Filter = "Text documents (.txt)|*.txt" // Filter files by extension
+                DefaultExt = ".csv",
+                Filter = "Csv datasets (.csv)|*.csv"
             };
 
-            Nullable<bool> result = dlg.ShowDialog();
+            if (Directory.Exists(defaultDirectory))
+            {
+                Trace.WriteLine("defaultDirectory exists");
+                dlg.InitialDirectory = defaultDirectory;
+            }
+            Trace.WriteLine("but anyway");
+
+            bool? result = dlg.ShowDialog();
 
             // Process open file dialog box results
             if (result == true)
