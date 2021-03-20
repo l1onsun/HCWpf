@@ -93,7 +93,7 @@
                     </TextBlock>
                     <TextBox Grid.Column="2" Grid.Row="0" Width="60" TextAlignment="Center"/>
                     <TextBlock Grid.Column="0" Grid.Row="1">
-                        Distanse Limit:
+                        Distance Limit:
                     </TextBlock>
                     <TextBox Grid.Column="2" Grid.Row="1" Width="60" TextAlignment="Center"/>
                 </Grid>
