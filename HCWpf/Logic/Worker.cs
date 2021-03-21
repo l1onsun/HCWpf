@@ -74,7 +74,7 @@ namespace HCWpf
             double predictionByDistance = 0;
             if (maxDistance > 0)
             {
-                predictionByIteration = algorithm.State.Iterations.Last().ClosestPair.Distance / maxDistance;
+                predictionByDistance = algorithm.State.Iterations.Last().ClosestPair.Distance / maxDistance;
             }
 
             return Convert.ToInt32(Math.Max(predictionByIteration, predictionByDistance) * 100);
