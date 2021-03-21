@@ -112,8 +112,17 @@ namespace HCWpf
             }
             activeDataset.AddLog("");
             activeDataset.AddLog("Start background worker");
+            activeDataset.AddLog("");
 
-            worker.Run(algorithm, (int x) => { });
+            worker.Run(algorithm, 
+                completeCallback: () => {
+                    activeDataset.AddLog("");
+                    foreach (var i in algorithm.State.Iterations)
+                    {
+                        logCallback(i.ToString());
+                    }
+                }
+            );
 
             activeDataset.AddLog("");
         }
@@ -134,7 +143,7 @@ namespace HCWpf
         private HCBaseAlgorithm algorithm;
         private readonly BackgroundWorker backgroundWorker;
         private readonly Action<int> progressCallback;
-        private Action<int> completeCallback;
+        private Action completeCallback;
         private int maxIterations;
         private double maxDistance;
 
@@ -153,7 +162,7 @@ namespace HCWpf
 
         public bool IsBusy { get => this.backgroundWorker.IsBusy; }
 
-        public void Run(HCBaseAlgorithm algorithm, Action<int> completeCallback)
+        public void Run(HCBaseAlgorithm algorithm, Action completeCallback)
         {
             this.algorithm = algorithm;
             this.completeCallback = completeCallback;
@@ -189,12 +198,13 @@ namespace HCWpf
         {
             progressCallback(e.ProgressPercentage);
             Trace.WriteLine("from worker ProgressChanged:");
+            Trace.WriteLine($"ProgressPercentage: {e.ProgressPercentage}");
             Trace.WriteLine(algorithm.LastIterationInfo());
         }
 
         void RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            MessageBox.Show(algorithm.LastIterationInfo());
+            completeCallback();
         }
     }
 }
