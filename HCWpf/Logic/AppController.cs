@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 
@@ -91,6 +92,8 @@ namespace HCWpf
 
         public void StartWorker(string algorithmType, int appliedSize, int minClusters, double distanceLimit)
         {
+            progressCallback(0);
+
             activeDataset.AddLog("Start new clustering!");
             activeDataset.AddLog("");
 
@@ -121,8 +124,13 @@ namespace HCWpf
             activeDataset.AddLog("Start background worker");
             activeDataset.AddLog("");
 
+            DateTime start = DateTime.Now;
+
             worker.Run(algorithm, 
                 completeCallback: () => {
+                    TimeSpan timeDelta = DateTime.Now - start;
+                    activeDataset.AddLog("Complete computation");
+                    activeDataset.AddLog($"Time took: {timeDelta.TotalMilliseconds} ms");
                     foreach (HCIteration i in algorithm.State.Iterations)
                     {
                         activeDataset.AddLog(i.ToString());

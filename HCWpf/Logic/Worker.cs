@@ -54,7 +54,7 @@ namespace HCWpf
                     return;
                 backgroundWorker.ReportProgress(PredictProgress());
 
-                Thread.Sleep(2000);  // emulate long computation 
+                // Thread.Sleep(2000);  // emulate long computation 
             }
         }
         private int PredictProgress()

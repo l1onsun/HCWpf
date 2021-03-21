@@ -4,6 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>chemistry_education_lab_laboratory_research_science_icon_123904.ico</ApplicationIcon>
   </PropertyGroup>
 
 </Project>
