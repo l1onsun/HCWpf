@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -39,7 +38,7 @@ namespace HCWpf
                 sliderAppliedSize.Value = value;
             }
         }
-        public int MaxClustets { get; set; }
+        public int MinClusters { get; set; }
         public double DistanceLimit { get; set; }
 
 
@@ -62,24 +61,23 @@ namespace HCWpf
 
             ReplaceLogs(SelectedDataset.Logs);
             appController.SetActiveDataset(SelectedDataset);
-
-            // buttonStart.IsEnabled = // ToDo: deside how to 
         }
 
         private void ButtonStart_Click(object sender, RoutedEventArgs e)
         {
-            buttonStart.IsEnabled = false;
             appController.StartWorker(
                 algorithmType: ((ComboBoxItem) chooseAlgorithm.SelectedItem).Content.ToString() ,
                 appliedSize: AppliedSize,
-                maxClusters: MaxClustets,
+                minClusters: MinClusters,
                 distanceLimit: DistanceLimit
             );
+            UpdateStartStopButtons();
         }
 
         private void ButtonStop_Click(object sender, RoutedEventArgs e)
         {
             appController.StopWorker();
+            UpdateStartStopButtons();
         }
 
         private void AddLog(string log)
@@ -117,9 +115,12 @@ namespace HCWpf
 
         private void UpdateProggres(int value)
         {
-            Trace.WriteLine($"...{value}");
-            progressBar.Visibility = Visibility.Visible;
-            progressBar.Value = value;
+            // values < 0 update buttons only
+            if (value >= 0)
+            {
+                progressBar.Visibility = Visibility.Visible;
+                progressBar.Value = value;
+            }
             UpdateStartStopButtons();
         }
 

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Windows;
 
 namespace HCWpf
@@ -31,11 +28,13 @@ namespace HCWpf
         public readonly Dictionary<string, DatasetKeeper> Datasets;
         private DatasetKeeper activeDataset;
         private readonly Action<string> logCallback;
+        private readonly Action<int> progressCallback;
         private readonly Worker worker;
 
         public AppController(Action<string> logCallback, Action<int> progressCallback)
         {
             this.logCallback = logCallback;
+            this.progressCallback = progressCallback;
             Datasets = new();
             worker = new(progressCallback);
         }
@@ -90,7 +89,7 @@ namespace HCWpf
             }
         }
 
-        public void StartWorker(string algorithmType, int appliedSize, int maxClusters, double distanceLimit)
+        public void StartWorker(string algorithmType, int appliedSize, int minClusters, double distanceLimit)
         {
             activeDataset.AddLog("Start new clustering!");
             activeDataset.AddLog("");
@@ -108,10 +107,10 @@ namespace HCWpf
             algorithm.InitState(activeDataset.Points.GetRange(0, appliedSize));
             activeDataset.AddLog($"Points count: {appliedSize}/{activeDataset.Size}");
 
-            if (maxClusters > 0)
+            if (minClusters > 0)
             {
-                algorithm.MaxClusters = maxClusters;
-                activeDataset.AddLog($"Maximum clusters: {maxClusters}");
+                algorithm.MinClusters = minClusters;
+                activeDataset.AddLog($"Minimum clusters: {minClusters}");
             }
             if (distanceLimit > 0)
             {
@@ -124,11 +123,13 @@ namespace HCWpf
 
             worker.Run(algorithm, 
                 completeCallback: () => {
-                    activeDataset.AddLog("");
-                    foreach (var i in algorithm.State.Iterations)
+                    foreach (HCIteration i in algorithm.State.Iterations)
                     {
                         activeDataset.AddLog(i.ToString());
                     }
+                    activeDataset.AddLog("");
+                    activeDataset.AddLog("");
+                    progressCallback(-1);
                 }
             );
 
@@ -143,84 +144,6 @@ namespace HCWpf
             }
             activeDataset = newActiveDataset;
             activeDataset.LogCallback = logCallback;
-        }
-    }
-
-    class Worker
-    {
-        private HCBaseAlgorithm algorithm;
-        private readonly BackgroundWorker backgroundWorker;
-        private readonly Action<int> progressCallback;
-        private Action completeCallback;
-        private int maxIterations;
-        private double maxDistance;
-
-        public Worker(Action<int> progressCallback)
-        {
-            this.progressCallback = progressCallback;
-
-            backgroundWorker = new()
-            {
-                WorkerReportsProgress = true,
-                WorkerSupportsCancellation = true,
-            };
-            backgroundWorker.DoWork += DoWork;
-            backgroundWorker.ProgressChanged += ProgressChanged;
-            backgroundWorker.RunWorkerCompleted += RunWorkerCompleted;
-        }
-
-        public bool IsBusy { get => this.backgroundWorker.IsBusy; }
-
-        public void Cancel()
-        {
-            this.backgroundWorker.CancelAsync();
-        }
-
-        public void Run(HCBaseAlgorithm algorithm, Action completeCallback)
-        {
-            this.algorithm = algorithm;
-            this.completeCallback = completeCallback;
-            maxIterations = algorithm.MaxIterations();
-            if (algorithm.DistanceLimit > 0)
-            {
-                maxDistance = algorithm.DistanceLimit;
-            }
-            else
-            {
-                maxDistance = double.PositiveInfinity;
-            }
-            backgroundWorker.RunWorkerAsync();
-        }
-        private void DoWork(object sender, DoWorkEventArgs e)
-        {
-            while (algorithm.Step())
-            {
-
-                if (backgroundWorker.CancellationPending)
-                    return;
-                backgroundWorker.ReportProgress(PredictProgress());
-                
-            }
-        }
-        private int PredictProgress()
-        {
-            double predictionByIteration = algorithm.State.Iterations.Count / maxIterations;
-            double predictionByDistance = algorithm.State.Iterations.Last().ClosestPair.Distance / maxDistance;
-
-            return (int)Math.Max(predictionByIteration, predictionByDistance) * 100;
-        }
-
-        private void ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            progressCallback(e.ProgressPercentage);
-            //Trace.WriteLine("from worker ProgressChanged:");
-            //Trace.WriteLine($"ProgressPercentage: {e.ProgressPercentage}");
-            //Trace.WriteLine(algorithm.LastIterationInfo());
-        }
-
-        void RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            completeCallback();
         }
     }
 }

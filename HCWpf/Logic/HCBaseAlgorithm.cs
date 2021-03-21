@@ -10,7 +10,7 @@ namespace HCWpf
         public HCState State;
         private readonly IDistanceMatrix distanceMatrix;
 
-        public int MaxClusters = -1;
+        public int MinClusters = -1;
         public double DistanceLimit = -1;
 
         public HCBaseAlgorithm(IDistanceMatrix distanceMatrix)
@@ -41,7 +41,7 @@ namespace HCWpf
             {
                 return false;
             }
-            if (MaxClusters > 0 && prevIteration.Clusters.Count >= MaxClusters)
+            if (MinClusters > 0 && prevIteration.Clusters.Count <= MinClusters)
             {
                 return false;
             }
@@ -91,10 +91,10 @@ namespace HCWpf
         {
             if (State.Iterations.Count == 0)
                 return 0;
-            if (MaxClusters <= 0)
+            if (MinClusters <= 0)
                 return State.Iterations[0].Clusters.Count;
             else
-                return Math.Min(MaxClusters, State.Iterations[0].Clusters.Count);
+                return State.Iterations[0].Clusters.Count - MinClusters + 1;
         }
 
 
