@@ -1,16 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace HCWpf
 {
-
-    class HCBaseAlgorithm<Matrix> where Matrix : IDistanceMatrix
+    class HCBaseAlgorithm
     {
 
         public HCState State;
-        private readonly Matrix distanceMatrix;
+        private readonly IDistanceMatrix distanceMatrix;
 
-        public HCBaseAlgorithm(Matrix distanceMatrix)
+        public int MaxClusters = -1;
+        public double DistanceLimit = -1;
+
+        public HCBaseAlgorithm(IDistanceMatrix distanceMatrix)
         {
             this.distanceMatrix = distanceMatrix;
         }
@@ -35,6 +38,14 @@ namespace HCWpf
         {
             var prevIteration = State.Iterations.Last();
             if (prevIteration.Clusters.Count <= 1)
+            {
+                return false;
+            }
+            if (MaxClusters > 0 && prevIteration.Clusters.Count >= MaxClusters)
+            {
+                return false;
+            }
+            if (DistanceLimit > 0 && prevIteration.ClosestPair.Distance >= DistanceLimit)
             {
                 return false;
             }
@@ -75,6 +86,17 @@ namespace HCWpf
         {
             return State.Iterations.Last().ToString();
         }
+
+        public int MaxIterations()
+        {
+            if (State.Iterations.Count == 0)
+                return 0;
+            if (MaxClusters <= 0)
+                return State.Iterations[0].Clusters.Count;
+            else
+                return Math.Min(MaxClusters, State.Iterations[0].Clusters.Count);
+        }
+
 
     }
 }

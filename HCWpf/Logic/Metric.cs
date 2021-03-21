@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 
 namespace HCWpf
 {
@@ -10,6 +8,7 @@ namespace HCWpf
         {
             return Math.Sqrt((a.X - b.X) * (a.X - b.X) + (a.Y - b.Y) * (a.Y - b.Y));
         }
+        
         public static double SingleLinkage(HCCluster a, HCCluster b)
         {
             double minDistance = double.PositiveInfinity;

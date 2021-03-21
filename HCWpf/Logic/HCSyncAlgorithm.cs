@@ -46,7 +46,7 @@ namespace HCWpf
         }
     }
 
-    class HCSyncAlgorithm : HCBaseAlgorithm<SyncDistanceMatrix>
+    class HCSyncAlgorithm : HCBaseAlgorithm
     {
         public HCSyncAlgorithm() : base(new SyncDistanceMatrix()) {}
     }

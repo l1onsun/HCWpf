@@ -117,7 +117,9 @@
 
             <!-- BOTTOM_BLOCK -->
             <StackPanel Grid.Row="4">
-                <ProgressBar Minimum="0" Maximum="100" Value="50" Margin="25 0 25 0" Height="10"></ProgressBar>
+                <ProgressBar x:Name="progressBar"
+                    Minimum="0" Maximum="100" Value="50" Margin="25 0 25 0" Height="10">
+                </ProgressBar>
                 
                 <!-- Start / Stop -->
                 <Grid Margin="25 10 25 20">

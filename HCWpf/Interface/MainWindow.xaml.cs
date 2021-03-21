@@ -15,7 +15,7 @@ namespace HCWpf
 
         public MainWindow()
         {
-            appController = new(logCallback: AddLog);
+            appController = new(logCallback: AddLog, progressCallback: UpdateProggres);
             InitializeComponent();
         }
 
@@ -50,7 +50,7 @@ namespace HCWpf
             {
                 chooseDataset.Items.Add(datasetName);
                 chooseDataset.SelectedIndex = chooseDataset.Items.IndexOf(datasetName);
-                buttonStart.IsEnabled = true;
+                UpdateStartStopButtons();
             }
         }
 
@@ -108,6 +108,20 @@ namespace HCWpf
             {
                 sliderAppliedSize.Value = DatasetSize;
             }
+        }
+
+        private void UpdateProggres(int value)
+        {
+            Trace.WriteLine($"...{value}");
+            progressBar.Visibility = Visibility.Visible;
+            progressBar.Value = value;
+            UpdateStartStopButtons();
+        }
+
+        private void UpdateStartStopButtons()
+        {
+            buttonStart.IsEnabled = !appController.IsWorkerBusy;
+            buttonStop.IsEnabled = appController.IsWorkerBusy;
         }
     }
 }
