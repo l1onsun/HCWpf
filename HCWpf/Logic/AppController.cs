@@ -54,7 +54,6 @@ namespace HCWpf
 
             if (Directory.Exists(defaultDirectory))
             {
-                Trace.WriteLine("defaultDirectory exists");
                 openDialog.InitialDirectory = Path.GetFullPath(defaultDirectory);
             }
 
@@ -83,11 +82,20 @@ namespace HCWpf
             return null;
         }
 
-        public void Start(string algorithmType, int appliedSize, int maxClusters, double distanceLimit)
+        public void StopWorker()
+        {
+            if (IsWorkerBusy)
+            {
+                worker.Cancel();
+            }
+        }
+
+        public void StartWorker(string algorithmType, int appliedSize, int maxClusters, double distanceLimit)
         {
             activeDataset.AddLog("Start new clustering!");
             activeDataset.AddLog("");
-            HCBaseAlgorithm algorithm = new HCSyncAlgorithm();
+
+            HCBaseAlgorithm algorithm;
 
             activeDataset.AddLog("Clustering parametes:");
             
@@ -119,7 +127,7 @@ namespace HCWpf
                     activeDataset.AddLog("");
                     foreach (var i in algorithm.State.Iterations)
                     {
-                        logCallback(i.ToString());
+                        activeDataset.AddLog(i.ToString());
                     }
                 }
             );
@@ -150,6 +158,7 @@ namespace HCWpf
         public Worker(Action<int> progressCallback)
         {
             this.progressCallback = progressCallback;
+
             backgroundWorker = new()
             {
                 WorkerReportsProgress = true,
@@ -161,6 +170,11 @@ namespace HCWpf
         }
 
         public bool IsBusy { get => this.backgroundWorker.IsBusy; }
+
+        public void Cancel()
+        {
+            this.backgroundWorker.CancelAsync();
+        }
 
         public void Run(HCBaseAlgorithm algorithm, Action completeCallback)
         {
@@ -181,9 +195,11 @@ namespace HCWpf
         {
             while (algorithm.Step())
             {
+
                 if (backgroundWorker.CancellationPending)
                     return;
                 backgroundWorker.ReportProgress(PredictProgress());
+                
             }
         }
         private int PredictProgress()
@@ -197,9 +213,9 @@ namespace HCWpf
         private void ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             progressCallback(e.ProgressPercentage);
-            Trace.WriteLine("from worker ProgressChanged:");
-            Trace.WriteLine($"ProgressPercentage: {e.ProgressPercentage}");
-            Trace.WriteLine(algorithm.LastIterationInfo());
+            //Trace.WriteLine("from worker ProgressChanged:");
+            //Trace.WriteLine($"ProgressPercentage: {e.ProgressPercentage}");
+            //Trace.WriteLine(algorithm.LastIterationInfo());
         }
 
         void RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

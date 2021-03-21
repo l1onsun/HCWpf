@@ -69,12 +69,17 @@ namespace HCWpf
         private void ButtonStart_Click(object sender, RoutedEventArgs e)
         {
             buttonStart.IsEnabled = false;
-            appController.Start(
+            appController.StartWorker(
                 algorithmType: ((ComboBoxItem) chooseAlgorithm.SelectedItem).Content.ToString() ,
                 appliedSize: AppliedSize,
                 maxClusters: MaxClustets,
                 distanceLimit: DistanceLimit
             );
+        }
+
+        private void ButtonStop_Click(object sender, RoutedEventArgs e)
+        {
+            appController.StopWorker();
         }
 
         private void AddLog(string log)

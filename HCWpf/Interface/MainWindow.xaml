@@ -135,6 +135,7 @@
                             Background="WhiteSmoke"
                             IsEnabled="False"></Button>
                     <Button x:Name="buttonStop" Width="65" Height="25"
+                            Click="ButtonStop_Click"
                             Content="Stop"
                             Grid.Column="2"
                             Background="WhiteSmoke"

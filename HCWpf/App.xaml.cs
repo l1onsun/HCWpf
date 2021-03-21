@@ -13,9 +13,5 @@ namespace HCWpf
     /// </summary>
     public partial class App : Application
     {
-        void SomeMethod()
-        {
-
-        }
     }
 }

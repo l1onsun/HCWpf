@@ -73,22 +73,26 @@ namespace HCWpf
             }
             return clusters;
         }
-        public static IEnumerable<(HCCluster I, HCCluster J)> AllPairs(List<HCCluster> clusters)
+        public static List<(HCCluster I, HCCluster J)> AllPairs(List<HCCluster> clusters)
         {
+            List<(HCCluster I, HCCluster J)> pairs = new();
             for (var i = 0; i < clusters.Count; i++)
             {
                 for (var j = i + 1; j < clusters.Count; j++)
                 {
-                    yield return (clusters[i], clusters[j]);
+                    pairs.Add((clusters[i], clusters[j]));
                 }
             }
+            return pairs;
         }
-        public IEnumerable<(HCCluster I, HCCluster J)> PairsWith(List<HCCluster> clusters)
+        public List<(HCCluster I, HCCluster J)> PairsWith(List<HCCluster> clusters)
         {
+            List<(HCCluster I, HCCluster J)> pairs = new();
             foreach (HCCluster cluster in clusters)
             {
-                yield return (this, cluster);
+                pairs.Add((this, cluster));
             }
+            return pairs;
         }
     }
 
