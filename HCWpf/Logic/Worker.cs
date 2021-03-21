@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace HCWpf
         private Action completeCallback;
         private int maxIterations;
         private double maxDistance;
+        private List<HCPoint> data;
 
         public Worker(Action<int> progressCallback)
         {
@@ -37,16 +39,22 @@ namespace HCWpf
             this.backgroundWorker.CancelAsync();
         }
 
-        public void Run(HCBaseAlgorithm algorithm, Action completeCallback)
+        public void Run(HCBaseAlgorithm algorithm, List<HCPoint> data, Action completeCallback)
         {
             this.algorithm = algorithm;
             this.completeCallback = completeCallback;
-            maxIterations = algorithm.MaxIterations();
+            this.data = data;
+
             maxDistance = algorithm.DistanceLimit;
             backgroundWorker.RunWorkerAsync();
         }
         private void DoWork(object sender, DoWorkEventArgs e)
         {
+            backgroundWorker.ReportProgress(0);
+            algorithm.InitState(data);
+            maxIterations = algorithm.MaxIterations();
+            backgroundWorker.ReportProgress(PredictProgress());
+
             while (algorithm.Step())
             {
 
@@ -69,18 +77,12 @@ namespace HCWpf
                 predictionByIteration = algorithm.State.Iterations.Last().ClosestPair.Distance / maxDistance;
             }
 
-            Trace.WriteLine($"predictionByIteration: {predictionByIteration}");
-            Trace.WriteLine($"predictionByDistance: {predictionByDistance}");
-
             return Convert.ToInt32(Math.Max(predictionByIteration, predictionByDistance) * 100);
         }
 
         private void ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             progressCallback(e.ProgressPercentage);
-            //Trace.WriteLine("from worker ProgressChanged:");
-            //Trace.WriteLine($"ProgressPercentage: {e.ProgressPercentage}");
-            //Trace.WriteLine(algorithm.LastIterationInfo());
         }
 
         void RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

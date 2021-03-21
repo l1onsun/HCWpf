@@ -96,20 +96,15 @@ namespace HCWpf
 
             activeDataset.AddLog("Start new clustering!");
             activeDataset.AddLog("");
+            activeDataset.AddLog("Clustering parametes:");
+            activeDataset.AddLog($"Algorithm type: {algorithmType}");
+            activeDataset.AddLog($"Points count: {appliedSize}/{activeDataset.Size}");
 
             HCBaseAlgorithm algorithm;
-
-            activeDataset.AddLog("Clustering parametes:");
-            
             if (algorithmType == "Synchronus")
                 algorithm = new HCSyncAlgorithm();
             else
                 algorithm = new HCConcurrentAlgorithm();
-            activeDataset.AddLog($"Algorithm type: {algorithmType}");
-
-            algorithm.InitState(activeDataset.Points.GetRange(0, appliedSize));
-            activeDataset.AddLog($"Points count: {appliedSize}/{activeDataset.Size}");
-
             if (minClusters > 0)
             {
                 algorithm.MinClusters = minClusters;
@@ -120,6 +115,7 @@ namespace HCWpf
                 algorithm.DistanceLimit = distanceLimit;
                 activeDataset.AddLog($"Distance limit: {distanceLimit}");
             }
+
             activeDataset.AddLog("");
             activeDataset.AddLog("Start background worker");
             activeDataset.AddLog("");
@@ -127,6 +123,7 @@ namespace HCWpf
             DateTime start = DateTime.Now;
 
             worker.Run(algorithm, 
+                data: activeDataset.Points.GetRange(0, appliedSize),
                 completeCallback: () => {
                     TimeSpan timeDelta = DateTime.Now - start;
                     activeDataset.AddLog("Complete computation");

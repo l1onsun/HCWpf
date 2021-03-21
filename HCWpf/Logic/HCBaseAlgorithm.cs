@@ -89,8 +89,10 @@ namespace HCWpf
 
         public int MaxIterations()
         {
-            if (State.Iterations.Count == 0)
-                return 0;
+            if (State == null || 
+                State.Iterations == null ||
+                State.Iterations.Count == 0)
+                return -1;
             if (MinClusters <= 0)
                 return State.Iterations[0].Clusters.Count;
             else

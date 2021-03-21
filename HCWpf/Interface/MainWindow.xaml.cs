@@ -65,6 +65,7 @@ namespace HCWpf
 
         private void ButtonStart_Click(object sender, RoutedEventArgs e)
         {
+            buttonStart.IsEnabled = false;
             appController.StartWorker(
                 algorithmType: ((ComboBoxItem) chooseAlgorithm.SelectedItem).Content.ToString() ,
                 appliedSize: AppliedSize,
